@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const initialBoard = Array(9).fill(null);
-const useTictacToe = () => {
-  const [board, setBoard] = useState(initialBoard);
+const initialBoard = (size) => Array(size * size).fill(null);
+const useTictacToe = (boardSize) => {
+  const [board, setBoard] = useState(initialBoard(boardSize));
   const [isONext, setIsONext] = useState(true);
+
+  // Reset board when boardSize changes
+  useEffect(() => {
+    setBoard(initialBoard(boardSize));
+    setIsONext(true);
+  }, [boardSize]);
 
   const handleClick = (index)=>{
     const winner = getWinner();
@@ -14,27 +20,46 @@ const useTictacToe = () => {
     setBoard(newBoard);
   }
 
-  const WINNING_PATTERNS = [
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    [0,4,8],
-    [6,4,2]
-  ];
+  const generateWinningPatterns = (size) => {
+    const patterns = [];
+    
+    // Horizontal patterns and vertical patterns
+    for (let i = 0; i < size; i++) {
+      const row = [];
+      const col = [];
+      for (let j = 0; j < size; j++) {
+        row.push(i * size + j);
+        col.push(j * size + i);
+      }
+      patterns.push(row);
+      patterns.push(col);
+    }
+    
+    // Diagonal patterns
+    const diagonal1 = [];
+    const diagonal2 = [];
+    for (let i = 0; i < size; i++) {
+      diagonal1.push(i * size + i);
+      diagonal2.push(i * size + (size - 1 - i));
+    }
+    patterns.push(diagonal1);
+    patterns.push(diagonal2);
+    
+    return patterns;
+  };
 
   const resetBoard = () => {
-    setBoard(initialBoard);
+    setBoard(initialBoard(boardSize));
     setIsONext(true);
   }
 
   const getWinner = () => {
-    for(let i=0;i<WINNING_PATTERNS.length;i++) {
-      const [a,b,c] = WINNING_PATTERNS[i];
-      if(board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+    const winningPatterns = generateWinningPatterns(boardSize);
+    for(let i=0;i<winningPatterns.length;i++) {
+      const pattern = winningPatterns[i];
+      const firstValue = board[pattern[0]];
+      if(firstValue && pattern.every(index => board[index] === firstValue)) {
+        return firstValue;
       }
     }
 
