@@ -1,0 +1,30 @@
+.game-board {
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.status-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 20px;
+}
+
+.cell {
+  border: 1px solid #cecece;
+  height: 100px;
+  width: 100px;
+  font-size: 36px;
+  color: #767676;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background-color: #e0e0e0;
+}
